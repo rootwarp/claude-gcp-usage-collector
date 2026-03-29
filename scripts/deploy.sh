@@ -52,7 +52,7 @@ gcloud run deploy "${SERVICE_NAME}" \
   --memory 512Mi \
   --cpu 1 \
   --min-instances 0 \
-  --max-instances 2 \
+  --max-instances 1 \
   --allow-unauthenticated \
   --service-account "${SA_EMAIL}" \
   --set-env-vars "GOOGLE_CLOUD_PROJECT=${PROJECT_ID},GOOGLE_CLOUD_REGION=${REGION}" \
