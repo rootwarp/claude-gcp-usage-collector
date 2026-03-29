@@ -13,7 +13,7 @@ echo "Deleting Cloud Run service..."
 gcloud run services delete "${SERVICE_NAME}" \
   --region "${REGION}" \
   --project "${PROJECT_ID}" \
-  --quiet
+  --quiet 2>/dev/null || true
 
 # Step 2: Remove IAM binding
 echo "Removing IAM binding..."
