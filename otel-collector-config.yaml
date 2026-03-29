@@ -1,0 +1,48 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  resourcedetection:
+    detectors: [gcp]
+    timeout: 10s
+
+  resource:
+    attributes:
+      - key: location
+        value: "${env:GOOGLE_CLOUD_REGION}"
+        action: upsert
+      - key: cluster
+        value: "claude-code-collector"
+        action: upsert
+      - key: namespace
+        value: "default"
+        action: upsert
+
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 65
+    spike_limit_percentage: 20
+
+  batch:
+    send_batch_size: 200
+    send_batch_max_size: 200
+    timeout: 5s
+
+exporters:
+  googlemanagedprometheus:
+    project: "${env:GOOGLE_CLOUD_PROJECT}"
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [resourcedetection, resource, memory_limiter, batch]
+      exporters: [googlemanagedprometheus]
